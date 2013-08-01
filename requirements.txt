@@ -1,0 +1,4 @@
+httplib2==0.6.0
+Flask==0.9
+distribute==0.6.31
+py2neo==1.4.6
