@@ -19,9 +19,9 @@ from py2neo import neo4j, cypher
 
 # Attach to the graph db instance
 #set below in main to:
-#graph_db = neo4j.GraphDatabaseService("http://localhost:7474/db/data/")
+graph_db = neo4j.GraphDatabaseService("https://bitbucket.org/phylet/phylet/downloads/atol.db.zip")
 
-graph_db=None
+#graph_db=None
 
 HOST_NAME = 'localhost' # !!!REMEMBER TO CHANGE THIS!!!
 PORT_NUMBER = 9292 # Maybe set this to 9000.
