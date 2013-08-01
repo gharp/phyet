@@ -1,0 +1,203 @@
+
+
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+
+   
+
+    
+.floatright{
+	float:right;
+	border:2px solid #a1a1a1;
+}
+
+
+/*color styles for nodes and edges*/
+
+path.link {
+  fill: none;
+  stroke: #fd3d3c;
+  stroke-opacity: 0.95;
+  stroke-width: 1.5px;
+}
+
+
+path.link.taxonomy {
+  fill: none;
+  stroke: #3399AA;
+  stroke-opacity: 0.95;
+  stroke-width: 1.0px;
+}
+
+circle.node {
+  fill: #fff;
+  stroke: #fff;
+  stroke-width: 0px;
+  stroke-opacity:0.75;
+} 
+
+circle.node.conflict {
+  fill: #fd3d3c;
+  stroke: #3d0d0c;
+  stroke-width: 0px;
+  stroke-opacity: 0.95;
+
+}
+
+circle.node.life {
+  fill: #4477AA;
+  stroke: #4477AA;
+  stroke-width: 0px;
+  stroke-opacity: 0.95;
+
+}
+
+circle.node.normal {
+  fill: #c6db3f;
+  stroke: #3399AA;
+  stroke-width: 0px;
+  stroke-opacity: 0.95;
+
+}
+
+
+text {
+  font-size: 10px;
+  fill: #333333;
+  font-face: sans-serif;
+  letter-spacing: 2px;
+  pointer-events: none;
+
+}
+
+text.shadow {
+  stroke: #fff;
+  stroke-width: 3px;
+  stroke-opacity: .8;
+}
+
+marker {
+    stroke: #fd3d3c;
+    stroke-width: 0.75px;
+    stroke-opacity: 0.95;
+    fill: #fd3d3c;
+}
+
+marker#taxonomy {
+    stroke: #3399AA;
+    stroke-width: 0.75px;
+    stroke-opacity: 1.0;
+    fill: #3399AA;
+}
+
+#generate{
+    border: 0px solid silver;
+/*    position: absolute; */
+    opacity: 1;
+    height: 300px; 
+    overflow: auto;
+}
+
+#scrollable{
+    border: 0px solid silver;
+    opacity: 1;
+    height: 200px; 
+    overflow: auto;
+}
+
+
+
+#toolbar a.active {
+color:#fff;
+}
+
+#toolbar .btn-link.active {
+  background-color: #333;
+  border-color: #fff;
+
+}
+
+#toolbar .btn-link {
+  cursor: pointer;
+  border-color: #333;
+
+}
+
+#toolbar .btn-link:hover, 
+.btn-link:focus {
+        border-color: #fff;
+}
+
+
+/*accordion sidebar*/
+.accordion {
+
+background-color: rgba(250,250,220,0.25);
+
+}
+
+.accordion-toggle {
+	letter-spacing:2px; 
+	text-transform:uppercase;
+	color: #fff;
+	}
+	
+.accordion-inner {
+	background-color: #fff;
+
+	}
+
+a:side_btns { 
+  .btn;
+  .btn-info;
+  .btn-small;
+	}
+
+
+#key .table th, .table td { 
+     border-top: none; 
+ }
+
+#key .p {
+	text-size: small;
+	}
+	
+	
+
+/*styles for path */
+.action {
+     padding: 3px 5px 2px;
+     display: inline;
+     border: #fff;
+     border-width: 1px;
+     border-style: solid;
+     color: #fff;
+     letter-spacing: 2px;
+     cursor: pointer;
+     border-radius: 200px;
+     -moz-border-radius: 5px;
+     -webkit-border-radius: 5px;
+     }
+.action:hover {
+/*     top: 1px;
+     padding: 1px 1px 1px 1px;*/
+     }
+.action:active {
+     background-position: 0 top;
+     position: relative;
+     top: 2px;
+     padding: 3px 5px 2px;
+     }
+     
+
+.action.c { background-color: #cc9900; }
+.action.p { background-color: #cc3399; }
+.action.a { background-color: #33ccff; }
+
+.popover {
+}
+
+#load_session_form {
+background-color: #fff;
+}

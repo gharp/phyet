@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>Force-Forced Directed Graph</title>
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js?1.25.0"></script>
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.geom.js?1.25.0"></script>
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.layout.js?1.25.0"></script>
+    <style type="text/css">
+    
+
+path.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+
+path.link.TAXCHILDOF {
+  fill: none;
+  stroke: #FFAAFF;
+  stroke-width: 1.5px;
+}
+
+path.link.MRCACHILDOF {
+  fill: none;
+  stroke: #FF3333;
+  stroke-width: 3.5px;
+}
+
+path.link.STREECHILDOF {
+  fill: none;
+  stroke: #99FF33;
+  stroke-width: 2.5px;
+}
+
+
+circle {
+  fill: #ccc;
+  stroke: #333;
+  stroke-width: 1.5px;
+}
+
+text {
+  font: 10px sans-serif;
+  pointer-events: none;
+}
+
+text.shadow {
+  stroke: #fff;
+  stroke-width: 3px;
+  stroke-opacity: .8;
+}
+
+    a{
+        cursor: pointer;
+        text-decoration: underline;
+        color: black;
+    }
+    #download{
+        border: 1px solid silver;
+        position: absolute;
+        opacity: 0;
+    }
+
+    </style>
+  </head>
+  <body>
+  <h3>Drag to move, double-click to expand/collapse</h3>
+
+  <a href="#" id="generate">Generate download preview</a>
+  <div id="viz"></div>
+<script type="text/javascript">
+    
+var w = 1280,
+    h = 1024;
+    
+var links_list = {};
+var nodes_list = {};
+
+//var links;
+//var nodes;
+var svg = d3.select("#viz").append("svg:svg")
+            .attr("width", w)
+            .attr("height", h);
+
+svg.append
+
+// Per-type markers, as they don't inherit styles.
+svg.append("svg:defs").selectAll("marker")
+    .data(["taxonomy", "cp_ml", "bootstrap_sample_1", "bootstrap_sample_0"])
+  .enter().append("svg:marker")
+    .attr("id", String)
+    .attr("viewBox", "0 -3 6 6")
+    .attr("refX", 9)
+    .attr("refY", -0.25)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("orient", "auto")
+  .append("svg:path")
+    .attr("d", "M0,-3L5,0L0,3");
+
+d3.select("#generate")
+    .on("click", writeDownloadLink);
+
+function writeDownloadLink(){
+    var html = d3.select("svg")
+        .attr("title", "Save")
+        .attr("version", 1.1)
+        .attr("xmlns", "http://www.w3.org/2000/svg")
+        .node().parentNode.innerHTML;
+    
+    d3.select("body").append("div")
+        .attr("id", "download.svg")
+        .style("top", event.clientY+20+"px")
+        .style("left", event.clientX+"px")
+        .html("Right-click on this preview and choose Save as<br />Left-Click to dismiss<br />")
+        .append("img")
+        .attr("src", "data:image/svg+xml;base64,"+ btoa(html));
+
+    d3.select("#download.svg")
+        .on("click", function(){
+            if(event.button == 0){
+                d3.select(this).transition()
+                    .style("opacity", 0)
+                    .remove();
+            }
+        })
+        .transition()
+        .duration(500)
+        .style("opacity", 1);
+};
+
+var force = d3.layout.force()
+    .size([w, h])
+    .linkDistance(90)
+    .friction(0.5)
+    .charge(50);
+
+d3.json("/stree/1", function(json) {
+    add_links(json);
+    update();
+})
+
+// Update visualization
+function update()
+{
+    var nodes_data = get_nodes();
+    var links_data = get_links();
+
+
+    var calc = 1.0 * links_data.length;
+    if(calc > 0)
+        calc = 500/calc + 50;
+    else
+        calc = 60;
+
+
+    force
+      .nodes(nodes_data)
+      .links(links_data)
+      .linkDistance(calc)
+      .charge(-180-calc)
+      .on("tick", tick)
+      .start();
+
+
+  // Update the links
+    var  links = svg.selectAll("path.link")
+      .data(links_data, function(l) { return lid(l); });
+
+  // Enter any new links.
+    links.enter().insert("svg:path", ".node")
+      .attr("class", "link")
+      .attr("marker-end", function(d) { return "url(#" + d.origin + ")"; })
+      .style("stroke", function(d) { return (d.origin=="taxonomy" ? "#3399AA" : "#CC3333"); })
+      .style("stroke-opacity", function(d) { return (d.origin=="taxonomy" ? 0.4 : 0.5); })
+      .style("stroke-width", function(d) { return (d.origin=="taxonomy" ? "1.5px" : "2.5px"); })
+      ;
+
+  // Exit any old links.
+    links.exit().remove();
+  
+    var nodes = svg.selectAll("circle.node")
+      .data(nodes_data, function(d) { return d.id; })
+      .style("fill", node_color);
+      
+  // Enter any new nodes.
+    nodes.enter().append("svg:circle")
+      .attr("class", "node")
+      .attr("cx", function(d) { return d.x; })
+      .attr("cy", function(d) { return d.y; })
+      .attr("r", node_size)
+      .style("fill", node_color)
+      .on("click", click)
+      .call(force.drag);
+  // Exit any old nodes.
+    nodes.exit().remove();  
+    
+    nodes.attr("r", node_size);
+    
+    var text = svg.selectAll("text")
+      .data(nodes_data, function(d) { return d.id; });
+
+// A copy of the text with a thick white stroke for legibility.
+/*
+    text.enter().append("svg:text")
+      .attr("x", 8)
+      .attr("y", ".31em")
+      .attr("class", "shadow")
+      .text(function(d) { return d.name; });
+*/
+    text.enter().insert("svg:text")
+      .attr("x", 8)
+      .attr("y", ".31em")
+      .attr("class", "text")
+      .text(function(d) { return d.name; });
+
+    text.exit().remove();    
+    
+    
+    function tick() {
+
+        links
+          .attr("fill", "none")
+          .attr("d", function(d) {
+            var tightness = -3.0;
+            if(d.origin == "taxonomy")
+                tightness = 1000;
+            var dx = d.target.x - d.source.x
+            var dy = d.target.y - d.source.y
+            var dr = Math.sqrt(dx * dx + dy * dy)
+            var qx = d.source.x + dx/2.0 - dy/tightness;
+            var qy = d.source.y + dy/2.0 + dx/tightness;
+            return "M" + d.source.x + "," + d.source.y + "Q"+ qx + "," + qy 
+                    + " " + d.target.x + "," + d.target.y;
+          });
+  
+        nodes.attr("cx", function(d) { return d.x; })
+          .attr("cy", function(d) { return d.y; });
+        text.attr("x", function(d) { return d.x; })
+          .attr("y", function(d) { return d.y; });
+    } // inner function tick() 
+} // function update()
+
+
+// Expand/contract children on click
+function click(d) {
+    if (d.child_count>0) {
+        if (d3.event.shiftKey) {
+            load_node("/stree/"+d.id);
+        }
+        else if(d3.event.ctrlKey){
+            hide_children(d)
+        }
+        else
+        {
+            load_node("/parents/"+d.id);
+        }
+    } 
+    update();
+}
+
+function load_node(pathClick) {
+	d3.json(pathClick, function(json) {
+	    if(json && json.length>0)
+	    {
+            add_links(json);
+            update();
+        }
+    });
+}
+
+function node_size(d) {
+  threshold = 8
+  return d.child_count < 1 ? 2 : (d.child_count < threshold ? d.child_count + 3: (threshold+5));
+}
+
+function node_color(d) {
+  return d.parent_count > 1 ? "#fd3d3c" : "#c6db3f";
+}
+
+
+function lid(link){
+//    return link.id;
+    return link.source.id + "-" + link.target.id;
+}
+
+// Returns a list of all nodes under the root.
+function get_links() {
+  
+  var links= [];
+  
+  for(key in links_list)
+  {
+    if(    links_list[key].invisible == true 
+        || links_list[key].source.invisible
+        || links_list[key].target.invisible
+        ){
+        // ignore invisible)
+    } else {
+        link = links_list[key];
+        links.push(link);
+    }
+  }
+
+  return links;
+}
+
+
+function add_node(node){
+    if(node.id in nodes_list){
+        (nodes_list[node.id].count)= nodes_list[node.id].count + 1;
+        nodes_list[node.id].invisible = false
+    } else {
+        node.invisible = false
+        nodes_list[node.id] = node;
+        nodes_list[node.id].count=1;
+        nodes_list[node.id].invisible = false
+    }
+    
+    return nodes_list[node.id];
+}
+
+function add_links(links)
+{
+    for(i=0; i<links.length;i++){
+	id = lid(links[i]);
+        if( links[i].source &&  links[i].target 
+//            && !(id in links_list) 
+//            && !(links[i].source.name[0]=='?' && links[i].target.name[0]=='?') 
+                ){
+            link = links[i];
+            _source = add_node(link.source);
+            _target = add_node(link.target);            
+            if(id in links_list)
+                links_list[id].invisible=false
+            else
+                links_list[id] = {id:id, source:_source, target:_target, 
+                                        origin:link.origin, invisible:false  };
+        }
+    }
+}
+
+function get_nodes(){
+  var nodes= [];
+  
+  for(key in nodes_list)
+  {
+    node = nodes_list[key];
+    if(node.invisible == true){
+        //ignore invisibles!!
+    } else {
+        nodes.push(node);
+    }
+  }
+
+  return nodes;
+}
+
+// Very inefficient!!!!
+function hide_children(node)
+{
+    var stack = [];
+    stack.push(node.id)
+    
+    while(stack.length > 0)
+    {
+        id = stack.pop()
+        for(key in links_list){
+            if( links_list[key].target.id == id )
+            {
+                if(links_list[key].source.invisible == false){
+                    child = links_list[key].source
+                    if( stack.indexOf(child.id) <0)
+                        stack.push(child.id)
+                    links_list[key].source.invisible = true
+                    nodes_list[child.id].invisible = true
+                }
+                links_list[key].invisible=true
+            }
+        }
+    }
+}
+
+    </script>
+
+  </body>
+</html>
+

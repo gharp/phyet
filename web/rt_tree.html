@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.node {
+  font: 10px sans-serif;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}
+
+    a{
+        cursor: pointer;
+        text-decoration: underline;
+        color: black;
+    }
+    #download{
+        border: 1px solid silver;
+        position: absolute;
+        opacity: 0;
+    }
+
+</style>
+<body>
+<div id="viz"></div>
+<a href="#" id="generate">Generate download preview</a>
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+
+var diameter = 760;
+
+var tree = d3.layout.tree()
+    .size([360, diameter / 2 - 120])
+    .separation(function(a, b) { return (a.parent == b.parent ? 1 : 2) / a.depth; });
+
+var diagonal = d3.svg.diagonal.radial()
+    .projection(function(d) { return [d.y, d.x / 180 * Math.PI]; });
+
+var svg=null;
+
+var svg = d3.select("#viz").append("svg")
+    .attr("width", diameter)
+    .attr("height", diameter)
+  .append("g")
+    .attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ")");
+
+var root;
+
+d3.select("#generate")
+    .on("click", writeDownloadLink);
+
+function writeDownloadLink(){
+    var html = d3.select("svg")
+        .attr("title", "test2")
+        .attr("version", 1.1)
+        .attr("xmlns", "http://www.w3.org/2000/svg")
+        .node().parentNode.innerHTML;
+
+    d3.select("#viz").append("div")
+        .attr("id", "download")
+        .style("top", event.clientY+20+"px")
+        .style("left", event.clientX+"px")
+        .html("Right-click on this preview and choose Save as<br />Left-Click to dismiss<br />")
+        .append("img")
+        .attr("src", "data:image/svg+xml;base64,"+ btoa(html));
+
+    d3.select("#download")
+        .on("click", function(){
+            if(event.button == 0){
+                d3.select(this).transition()
+                    .style("opacity", 0)
+                    .remove();
+            }
+        })
+        .transition()
+        .duration(500)
+        .style("opacity", 1);
+};
+
+
+
+d3.json("/children/1", function(error, json) {
+    root=json;
+    update(error, root);
+});
+
+d3.select(self.frameElement).style("height", diameter + "px");
+
+function update(error, ignore) {
+
+  var nodes = tree.nodes(root);
+
+
+
+  var links = tree.links(nodes);
+
+  svg.selectAll(".link").remove();
+  
+var link = svg.selectAll(".link")
+      .data(links);
+
+    link.enter().append("path")
+      .attr("class", "link")
+      .attr("d", diagonal)
+//      .attr("fill", "none")
+    ;
+
+
+/* var links = tree.links(nodes);
+
+  var link = svg.selectAll(".link")
+      .data(links);
+
+    link.enter().append("path")
+      .attr("class", "link")
+      .attr("d", diagonal);
+*/
+  var selec = svg.selectAll(".node")
+      .data(nodes, function(d){ return d.id; });
+
+  var node = selec.enter().append("g")
+      .attr("class", "node")
+      .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
+      .on("click", function(d) { toggle(d); update(null, root); });
+
+  node.append("circle")
+      .attr("r", 4.5);
+
+  node.append("text")
+      .attr("dy", ".31em")
+      .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
+      .attr("transform", function(d) { return d.x < 180 ? "translate(8)" : "rotate(180)translate(-8)"; })
+      .text(function(d) { return d.name; });
+
+ var all = svg.selectAll(".node");
+
+ all.selectAll("circle").attr("r", 4.5);
+ all.selectAll("text").style("fill-opacity", 1);
+ all.attr("class", "node")
+      .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
+      .on("click", function(d) { toggle(d); update(null, root); });
+
+  var exit = selec.exit();
+
+  exit.select("circle")
+      .attr("r", 1e-6);
+
+  exit.select("text")
+      .style("fill-opacity", 1e-6);
+/*
+  var links = tree.links(nodes);
+
+  svg.selectAll(".link").remove();
+  
+var link = svg.selectAll(".link")
+      .data(links);
+
+//  link.remove();
+//  link.enter().insert("path")
+    link.enter().append("path")
+      .attr("class", "link")
+      .attr("d", diagonal);
+//link.exit().remove();
+*/
+}
+
+function toggle(d) {
+  
+  if (d.children && d.children.length>0) {
+    d._children = d.children;
+    d.children = null;
+  } else {
+    if (d._children && d._children.length>0){
+        d.children = d._children;
+        d._children = null;
+    } else {
+        load_node(d,0);
+    }
+
+  }
+} 
+
+function toggleOff(d) {
+    if (d.children) {
+	d.children.forEach(toggleOff);
+   // toggle(d);
+	d._children = d.children;
+	d.children = null;
+    }
+}
+
+
+function load_node(d, i) { 
+    var pathClick = "/children/"+d.id;
+//      alert(pathClick);
+    d3.json(pathClick, function(json) {
+        
+        if(json.children.length<1 || json.children[0].name==null)   
+        {
+            //toggle(d);
+            return; 
+        }
+        d.children = json.children;
+        toggleOff(d);
+        toggle(d);
+        update(root);
+    });
+        
+}
+
+
+</script>
+</body>
+</head>

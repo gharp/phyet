@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+
+    <head>
+
+        <meta charset="utf-8">
+
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+        <title>Phylet</title>
+
+        <meta name="description" content="Opn Gph of Lyf">
+
+        <meta name="viewport" content="width=device-width" initial-scale=1.0">
+        
+		<script type="text/javascript" src="http://mbostock.github.com/d3/d3.js?1.25.0"></script>
+
+    	<script type="text/javascript" src="http://mbostock.github.com/d3/d3.geom.js?1.25.0"></script>
+
+    	<script type="text/javascript" src="http://mbostock.github.com/d3/d3.layout.js?1.25.0"></script>
+
+
+	
+
+        <!--<script src="js/main.js"></script>-->
+
+
+
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+
+        <style>
+
+            body {
+
+                padding-top: 60px;
+
+                padding-bottom: 40px;
+                
+				background-image:url('img/background/aquatic.jpg');
+				
+
+            }
+
+        </style>
+
+        <link rel="stylesheet" href="css/bootstrap-responsive.min.css">
+
+        <link rel="stylesheet" href="css/main.css">
+
+		
+
+		<script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+
+        <script src="js/gol.js"></script>
+
+        
+
+    </head>
+
+    <body>
+
+        <!--[if lt IE 7]>
+
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+
+        <![endif]-->
+
+<div data-role="page" id="main">
+
+        <!-- nav header toolbar -->
+
+
+
+        <div class="navbar navbar-inverse navbar-fixed-top"  >
+
+            <div class="navbar-inner" >
+
+                <div class="container">
+
+                    <a id="mast" class="brand" href="#"><strong>Phylet</strong><i class="icon-white icon-leaf"></i></a>
+	
+					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+
+                        <span class="icon-bar"></span>
+
+                        <span class="icon-bar"></span>
+
+                        <span class="icon-bar"></span>
+
+                    </a>
+                    
+                    <div class="nav-collapse collapse pull-left">
+
+                        <ul id="toolbar" class="nav nav-pills pull-left">   
+						<li><a href="#myModal" class="btn btn-link"  data-toggle="modal" title="Visual references"><i class="icon-white icon-question-sign"></i> Key</a></li>
+						<li><a id="labels" class="btn btn-link"  data-toggle="button" title="Show/hide node's labels"><i class="icon-white icon-font"></i><i class="icon-white icon-tags"></i> Labels</a></li>
+						<li><a id="highlight" class="btn btn-link"  data-toggle="button" title="Highlight focused node"><i class="icon-white icon-eye-open"></i> Highlight</a></li>
+						<li><a id="stopresume" class="btn btn-link" data-toggle="button" title="Pause/resume animation"><i class="icon-white icon-pause"></i> Pause</a></li>
+						<li><a id="download" class="btn btn-link"><i class="icon-white icon-camera" title="Create snapshot"></i> Snapshot</a></li>
+						<li> 
+						
+						<a href="#" id="node_info" class="btn btn-link" data-toggle="button" rel="popover" data-html="true" data-container="body" data-content="
+			
+						<div style=font-size:90%>
+ 						<p class=muted>name: <i class=text-success id=name></i></p>
+    					<p class=muted>number of parents: <i class=text-success id=numParents></i></p>
+        				<p class=muted>parents: <i class=text-success id=parents></i></p>
+        				<p class=muted>highest confidence parent: <i class=text-success id=parent></i></p>
+        				<p class=muted>number of children: <i class=text-success id=numChildren></i></p>
+        				<p class=muted>children: <i class=text-success id=children></i></p></div>">
+        				<i class="icon-white icon-info-sign"> 				
+        				</i> Node Info</a>   
+						<script src="http://code.jquery.com/jquery-1.9.1.js"></script>  
+						<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>  
+						<!--<script src="/twitter-bootstrap/twitter-bootstrap-v2/js/bootstrap-popover.js"></script>-->  
+				        <script type="text/javascript" src="js/vendor/jquery.dialog2.js"></script>
+                        <script type="text/javascript" src="js/vendor/jquery.dialog2.helpers.js"></script>
+						<script>  
+						$(function ()  
+						{ $("#node_info").popover({placement:'bottom'});  
+						});  
+						
+						
+						</script>  
+						</li>
+						</ul>
+ 					
+ 					</div>
+ 						
+		
+
+                    </div><!--/.nav-collapse -->
+
+ 					
+                </div>
+
+            </div>
+            
+           
+
+        </div>
+
+
+
+        <div class="container-fluid" >
+
+  <div class="row-fluid">
+  <!--visualization here -->
+  <div class="span9" id="viz" style="background-color: #fff">
+  </div>
+
+
+    <!--Sidebar content-->
+
+    <div class="span3">
+
+<!-- Modal -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <p style="letter-spacing:1px"><strong>Phylet</strong> helps you search and browse a <abbr title="uses some physics math to show a network graph that looks good" class="initialism">force-directed</abbr> graph network of <abbr  title="evolutionary relationships among groups of organisms" class="initialism">phylogenetic</abbr> data about biological species relationships.</p>
+  </div>
+  <div class="modal-body">
+ 	<table class="table table-condensed" style="letter-spacing:1px">
+ 	<tbody class="pull-left well well-small">
+ 		<tr><td><span width="100%" class="badge" style="background-color:#33ccff">Click</span> open children</td></tr>
+ 		<tr><td><span width="100%" class="badge" style="background-color:#cc3399">SHIFT-Click</span> open parents</td></tr>
+ 		<tr><td><span width="100%" class="badge" style="background-color:#cc9900">Control-SHIFT-Click</span> close</td></tr>
+ 		<tr><td><span width="100%" class="badge" style="background-color:#333333">Click-drag</span> grab and move</td></tr>
+ 		<tr><td><span width="100%" class="badge" style="background-color:#333333">Swipe/Double-Click</span> zoom</td></tr>
+ 	 	<tr><td><p></p></td><td><p></p></td></tr>
+    	<tr><td><p><a class="" href="#help">get help</a></p></td></tr>
+ 	 	<tr><td><p><a class="" href="#learn">learn about Phylet</a></p></td></tr>
+	</tbody>    
+	<tbody class="pull-right well well-small">
+ 		<tr><td><img src="img/key/unresolvedNode.png"></td><td><p>unresolved nodes</p></td></tr>
+ 		<tr><td><img src="img/key/resolvedNode.png"></td><td><p>resolved nodes</p></td></tr>
+ 		<tr><td><img src="img/key/resolvedArrow.png"></td><td><p>resolved relationships</p></td></tr>
+ 		<tr><td><img src="img/key/unresolvedArrow.png"></td><td><p>unresolved relationships</p></td></tr>
+ 		<tr><td><img src="img/key/moreHidden.png"></td><td><p>some relationships hidden</p></td></tr>
+ 	 	<tr><td><img src="img/key/noneHidden.png"></td><td><p>all relationships shown</p></td></tr>
+    	<tr><td><img src="img/key/moreChilds.png"></td><td><p>more child relationships</p></td></tr>
+ 	 	<tr><td><img src="img/key/lessChilds.png"></td><td><p>fewer child relationships</p></td></tr>
+ 	 	<tr><td><img src="img/key/root.png"></td><td><p>root</small></p></td></tr>
+	</tbody>
+ 	</table>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-info btn-small" data-dismiss="modal" aria-hidden="true">Okay!</button>
+  </div>
+</div>
+
+
+
+
+
+
+		<!--/right info bar -->
+
+			
+<div class="accordion" id="accordion2">
+
+   <!-- /search -->
+
+  <div class="accordion-group">
+    <div class="accordion-heading">
+      <a class="accordion-toggle" data-toggle="collapse" data-parent="" href="#collapseSearch" >
+      Search <i class="icon-white icon-search pull-right"></i>
+      </a>
+    </div>
+    <div id="collapseSearch" class="accordion-body collapse">
+      <div id="side_btns" class="accordion-inner">
+          <div class="well well-small">
+          <input type="text" class="input-medium span="span12" id="search_value" placeholder="case-sensitive">
+			<a class="btn btn-info" id="search_btn">Search</a></span>
+		<input type="checkbox" checked="checked" id="search_remote"> <small>remote data</small>
+		</div>
+			<div id="scrollable">
+            <!--put search results here-->
+			<table class="table table-condensed text-success" id="search_results">
+			</table>
+          </div>
+
+		</div>
+    </div>
+  </div>
+ 
+ 
+   <!-- /path -->
+
+  <div class="accordion-group">
+    <div class="accordion-heading" >
+      <a class="accordion-toggle" data-toggle="collapse" data-parent="" href="#collapsePath" >
+      Path <i class="icon-white icon-bookmark pull-right"></i>
+      </a>
+    </div>
+    <div id="collapsePath" class="accordion-body collapse" >
+      <div class="accordion-inner">
+      <div class="well well-small">
+	  <div class=" btn-group btn-group-vertical">
+      <a class="btn btn-info" id="reload_btn">Reload Nodes <i class="icon-white icon-refresh"></i></a>
+      <a class="btn btn-info" id="action_share_btn">Share Session <i class="icon-white icon-share"></i></a>
+      <a class="btn btn-info" id="action_load_btn">Load Session <i class="icon-white icon-upload"></i></a>
+      </div>
+       </div>
+       
+        <div id="scrollable">
+   		  <ul id="path_list" class="unstyled">
+ 		  </ul>
+ 		</div>
+      </div>
+    </div>
+  </div> 
+
+
+ 
+  
+   <!-- /snapshot -->
+
+  <div class="accordion-group">
+    <div class="accordion-heading" >
+      <a class="accordion-toggle" data-toggle="collapse" data-parent="" href="#collapseSnapshot" >Snapshots<i class="icon-white icon-picture pull-right"></i>
+      </a>
+    </div>
+    <div id="collapseSnapshot" class="accordion-body collapse" >
+      <div class="accordion-inner" >
+      
+     <div id="generate"></div>
+     
+    </div>
+    </div>
+  </div>
+</div>
+
+	 		</div>
+
+         <!-- </div>/.well -->
+
+        </div><!--/span-->
+
+
+
+</div>
+
+
+
+
+            <hr>
+
+
+
+            <footer>
+            
+        <div class="navbar navbar-inverse navbar-fixed-botton"  >
+
+            <div class="navbar-inner" >					
+                        <ul class="nav">   
+                            <li class="active"><a href="#">Learn</a></li>
+                            <li><a href="#about">About</a></li> 
+                            <li><a href="#contact">Contact</a></li> 
+                        	<li><a rel="license" class="pull-right" href="http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/3.0/80x15.png" /><br /><!--This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License--></a></li>
+                           
+                    </ul>
+			</div>
+			</div>
+
+
+            </footer>
+
+
+
+        </div> <!-- /container -->
+</div> <!--main page-->
+<div data-role="page" id="contact" style="background-color:#fff" class=" hide ui-widget">
+<div><p>Phylocate is a web browser-based tool for researching phylogenetic relationships
+Phylocate is pending release as an open-source project under the Apache 2.0 license.
+
+Current project participants: 
+Mariano Cecowski
+Cid Freitag
+Gabriel Harp
+Shruthi Jeganathan
+Stephanie Poppe
+
+Data and scientific advice provided by Stephen Smith, Assistant Professor at the University of Michigan, and the Open Tree of Life project community.  
+
+The workgroup was formed during the Information Visualization MOOC course (http://ivmooc.cns.iu.edu/) of the Indiana University led by Katy Börner, Scott Weingart, and Ted Polley. 
+
+We are currently developing the project as a research tool and visualization platform. 
+To learn more, get in touch, or offer support please email: phylocate@gmail.com</p>
+</div>
+</div>
+
+		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+		<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.9.1.js"><\/script>')</script>
+
+
+
+        <script src="js/vendor/bootstrap.min.js"></script>
+        
+        <script src="js/vendor/jquery.dialog2.js"></script>
+        <script src="js/vendor/jquery.dialog2.helpers.js"></script>
+        
+
+        <script>
+
+            var _gaq=[['_setAccount','UA-39552994-1'],['_trackPageview']];
+
+            var show_node_labels = false;
+            var show_highlight = false;
+            var stopped=false;
+
+            (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+
+            g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+
+            s.parentNode.insertBefore(g,s)}(document,'script'));
+
+            var gol;
+
+            // connections with GoL API; done 'onLoad' to get the elements width
+            $(window).load(function(){ 
+                panel_width = $("#viz").width();  //accordion2
+                gol = new GoL('viz', panel_width-10, window.innerHeight-160);
+                gol.showLabels(show_node_labels);
+                gol.showHighlight(show_highlight);
+                gol.start()
+                gol.setNodeActionListener( node_action_listener);
+            });
+        
+                        
+            $("#labels").click( function(){gol.showLabels( show_node_labels= !show_node_labels); });
+            $("#highlight").click( function(){gol.showHighlight( show_highlight= !show_highlight); });
+            $("#stopresume").click( function(){gol.runForce( stopped= !stopped); }); 
+            $("#search_btn").click( function(){ doSearch(); }); 
+            $("#search_value").keyup(function(event){ if(event.keyCode == 13){ $("#search_btn").click();  }  });
+            $("#action_share_btn").click( function(){ alert( JSON.stringify(  getAllActions()  ) ) }); 
+            $("#action_load_btn").click( load_function ); 
+            $("#reload_btn").click( reload_function ); 
+            
+ 
+
+            var path_index = 0;
+
+            function reload_function(){
+                $.fn.dialog2.helpers.confirm("Do you really want to reload the actions of this list?<br>The current graph will be lost", {
+                    confirm: function() {
+                                actions = getAllActions();
+                                $('#path_list li').remove();
+                                gol.reloadActions( actions, true ); 
+                             }, 
+                    decline: function() { return; }
+                });
+            }
+                        
+            function load_function(){
+                $.fn.dialog2.helpers.prompt("Paste session json code here", {
+                    ok: function(event, value) {
+                            $('#path_list li').remove();
+                            gol.reloadActions( JSON.parse( value ), true );
+                        }, 
+                    cancel: function() { return; }
+                });
+            }
+            
+			function doSearch(){
+                $('#search_btn').attr('disabled', 'disabled').addClass('disabled');
+                if($('#search_remote').is(':checked'))
+                    searchRemote($('#search_value').val() + "*");
+                else
+                    displaySearch( JSON.parse( gol.findNodes( $('#search_value').val() ) ), false); 
+            }
+            
+            function displaySearch(results, remote){
+                console.log("displaying " + results.length+ " results");
+                $('#search_results tbody').empty();
+                for(entry in results){
+                    if(remote)
+                        $('#search_results')
+                            .append('<tr><td><a href="#" onclick="javascript:gol.loadNode('
+                            +results[entry].id+');">'+results[entry].name+'</a></td></tr>');
+                    else
+                        $('#search_results')
+                        .append('<tr><td><a href="#" onclick="javascript:gol.centreNode('+
+                        results[entry].id+');">'+results[entry].name+'</a></td></tr>')
+                }
+                $('#search_btn').removeAttr('disabled').button("reset");
+            }
+            
+            function searchRemote(text){
+                var url = 'http://mariano.gmajna.net/search/'+text;
+	            $.getJSON(url,function (data){
+		            displaySearch(data, true);
+		            });
+            }
+            
+            function getAllActions(){
+                vector = []
+                $('div[name="path_entry"]').each(
+                    function(nx, el) { 
+                        vector.push({ name:el.getAttribute("toponym"),
+                                      id:el.getAttribute("node_id"),
+                                      action:el.getAttribute("action")}  );
+                });
+                return vector;
+            }
+            
+            function node_action_listener(name, id, action){
+                        // This is just an example of what could be used at the UI; fix acordingly
+                        // On any change to the actions in the list, you need to call 
+                        // gol.recreateActions([{1,'a'}, {921,'p'}, {3, 'c'}...{node, action}], true);
+                        // you can potentially save the performed actions, send them to someone else
+                        // and replay it at another instance
+                        path_index++;
+                        $('#path_list').append('<li value='+path_index
+                            +'><div name="path_entry" node_id="'+id
+                            +'" action="'+action+'" toponym="'+name
+                            +'"><button type="button" class="action '
+                            +action+'" onclick="JavaScript:gol.centreNode('+id+')">'+name
+                            +'</button><button type="button" class="close" data-dismiss="alert" '
+//                            +'onclick="JavaScript:node_actions_close('
+//                            +path_index+')"' 
+                            + '>&times;</button></div></li>');
+           }
+                
+        </script>
+        
+
+    </body>
+</html>
+
