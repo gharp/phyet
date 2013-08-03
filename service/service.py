@@ -25,9 +25,9 @@ neo4j.authenticate("http://40cff9255.hosted.neo4j.org:7391", "06e990d53", "2ef51
 
 # Attach to the graph db instance
 #set below in main to:
-#graph_db = neo4j.GraphDatabaseService("http://06e990d53:2ef5193c0@40cff9255.hosted.neo4j.org:7391/db/data/")
+graph_db = neo4j.GraphDatabaseService("http://06e990d53:2ef5193c0@40cff9255.hosted.neo4j.org:7391/db/data/")
 
-graph_db=None
+#graph_db=None
 
 
 
@@ -344,7 +344,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 if __name__ == '__main__':
     server_class = BaseHTTPServer.HTTPServer
     httpd = server_class((HOST_NAME, PORT_NUMBER), MyHandler)
-    graph_db = neo4j.GraphDatabaseService("http://40cff9255.hosted.neo4j.org:7391/db/data/")
+    graph_db = neo4j.GraphDatabaseService("http://06e990d53:2ef5193c0@40cff9255.hosted.neo4j.org:7391/db/data/")
     print time.asctime(), "Server Starts - %s:%s" % (HOST_NAME, PORT_NUMBER)
     try:
         httpd.serve_forever()
