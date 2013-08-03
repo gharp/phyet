@@ -20,7 +20,7 @@ from py2neo import neo4j, cypher
 
 
 # set up authentication parameters
-neo4j.authenticate("http://40cff9255.hosted.neo4j.org:7391", "06e990d53", "2ef5193c0")
+#neo4j.authenticate("http://40cff9255.hosted.neo4j.org:7391", "06e990d53", "2ef5193c0")
 
 
 # Attach to the graph db instance
