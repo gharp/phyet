@@ -25,14 +25,14 @@ neo4j.authenticate("http://40cff9255.hosted.neo4j.org:7391", "06e990d53", "2ef51
 
 # Attach to the graph db instance
 #set below in main to:
-graph_db = neo4j.GraphDatabaseService("http://hosted.neo4j.org/db/data/")
+graph_db = neo4j.GraphDatabaseService("http://hosted.neo4j.org:7391/db/data/")
 
 #graph_db=None
 
 
 
-HOST_NAME = '40cff9255' # !!!REMEMBER TO CHANGE THIS!!!
-PORT_NUMBER = 7391 # Maybe set this to 9000.
+#HOST_NAME = '40cff9255' # !!!REMEMBER TO CHANGE THIS!!!
+#PORT_NUMBER = 7391 # Maybe set this to 9000.
 nodes_r = re.compile(r'/children/([0-9]+)')
 rel_r = re.compile(r'/relations/([0-9]+)')
 stree_r = re.compile(r'/stree/([0-9]+)')
