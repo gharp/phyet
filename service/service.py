@@ -25,9 +25,9 @@ neo4j.authenticate("http://40cff9255.hosted.neo4j.org:7391", "06e990d53", "2ef51
 
 # Attach to the graph db instance
 #set below in main to:
-graph_db = neo4j.GraphDatabaseService("http://40cff9255.hosted.neo4j.org:7391/db/data/")
+#graph_db = neo4j.GraphDatabaseService("http://06e990d53:2ef5193c0@40cff9255.hosted.neo4j.org:7391/db/data/")
 
-#graph_db=None
+graph_db=None
 
 
 
