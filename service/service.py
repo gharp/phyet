@@ -20,12 +20,12 @@ from py2neo import neo4j, cypher
 
 
 # set up authentication parameters
-neo4j.authenticate("40cff9255.hosted.neo4j.org:7391/db/data/", "06e990d53", "2ef5193c0")
+neo4j.authenticate("40cff9255.hosted.neo4j.org:7391", "06e990d53", "2ef5193c0")
 
 
 # Attach to the graph db instance
 #set below in main to:
-graph_db = neo4j.GraphDatabaseService("http://06e990d53:2ef5193c0@40cff9255.hosted.neo4j.org:7391/db/data/")
+graph_db = neo4j.GraphDatabaseService("http://06e990d53:2ef5193c0@40cff9255.hosted.neo4j.org:7391")
 
 #graph_db=None
 
@@ -344,7 +344,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 if __name__ == '__main__':
     server_class = BaseHTTPServer.HTTPServer
     httpd = server_class((HOST_NAME, PORT_NUMBER), MyHandler)
-    graph_db = neo4j.GraphDatabaseService("http://06e990d53:2ef5193c0@40cff9255.hosted.neo4j.org:7391/db/data/")
+    graph_db = neo4j.GraphDatabaseService("http://06e990d53:2ef5193c0@40cff9255.hosted.neo4j.org:7391")
     print time.asctime(), "Server Starts - %s:%s" % (HOST_NAME, PORT_NUMBER)
     try:
         httpd.serve_forever()
