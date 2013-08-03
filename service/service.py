@@ -23,7 +23,7 @@ from py2neo import neo4j, cypher
 
 # Attach to the graph db instance
 #set below in main to:
-graph_db = neo4j.GraphDatabaseService("http://40cff9255.hosted.neo4j.org:7391")
+graph_db = neo4j.GraphDatabaseService("http://40cff9255.hosted.neo4j.org:7391/db/data/")
 
 #graph_db=None
 
