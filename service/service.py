@@ -27,8 +27,8 @@ graph_db = neo4j.GraphDatabaseService("http://40cff9255.hosted.neo4j.org:7391/db
 
 #graph_db=None
 
-HOST_NAME = 'localhost' # !!!REMEMBER TO CHANGE THIS!!!
-PORT_NUMBER = 9292 # Maybe set this to 9000.
+#HOST_NAME = 'localhost' # !!!REMEMBER TO CHANGE THIS!!!
+#PORT_NUMBER = 9292 # Maybe set this to 9000.
 nodes_r = re.compile(r'/children/([0-9]+)')
 rel_r = re.compile(r'/relations/([0-9]+)')
 stree_r = re.compile(r'/stree/([0-9]+)')
@@ -340,7 +340,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 if __name__ == '__main__':
     server_class = BaseHTTPServer.HTTPServer
     httpd = server_class((HOST_NAME, PORT_NUMBER), MyHandler)
-    graph_db = neo4j.GraphDatabaseService("http://localhost:7474/db/data/")
+    graph_db = neo4j.GraphDatabaseService("http://40cff9255.hosted.neo4j.org:7391/db/data/")
     print time.asctime(), "Server Starts - %s:%s" % (HOST_NAME, PORT_NUMBER)
     try:
         httpd.serve_forever()
