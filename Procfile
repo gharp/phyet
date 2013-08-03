@@ -1,1 +1,1 @@
-web: python service/service.py
+worker: python service/service.py
