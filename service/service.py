@@ -39,8 +39,8 @@ graph_db = neo4j.GraphDatabaseService("http://40cff9255.hosted.neo4j.org:7391/db
 
 
 
-#HOST_NAME = '40cff9255' # !!!REMEMBER TO CHANGE THIS!!!
-#PORT_NUMBER = 7391 # Maybe set this to 9000.
+HOST_NAME = '40cff9255' # !!!REMEMBER TO CHANGE THIS!!!
+PORT_NUMBER = 7391 # Maybe set this to 9000.
 nodes_r = re.compile(r'/children/([0-9]+)')
 rel_r = re.compile(r'/relations/([0-9]+)')
 stree_r = re.compile(r'/stree/([0-9]+)')
