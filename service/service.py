@@ -33,14 +33,14 @@ neo4j.authenticate("40cff9255.hosted.neo4j.org:7391", "06e990d53", "2ef5193c0")
 
 # Attach to the graph db instance
 #set below in main to:
-#graph_db = neo4j.GraphDatabaseService("http://40cff9255.hosted.neo4j.org:7391/db/data/")
+graph_db = neo4j.GraphDatabaseService("http://40cff9255.hosted.neo4j.org:7391/db/data/")
 
-graph_db=None
+#graph_db=None
 
 
 
 HOST_NAME = 'phylet.herokuapp.com' # !!!REMEMBER TO CHANGE THIS!!!
-PORT_NUMBER = 80 # Maybe set this to 9000.
+PORT_NUMBER = 8282 # Maybe set this to 9000.
 nodes_r = re.compile(r'/children/([0-9]+)')
 rel_r = re.compile(r'/relations/([0-9]+)')
 stree_r = re.compile(r'/stree/([0-9]+)')
