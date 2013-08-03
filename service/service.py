@@ -25,14 +25,14 @@ from py2neo import neo4j, cypher
 
 # Attach to the graph db instance
 #set below in main to:
-graph_db = neo4j.GraphDatabaseService("http://40cff9255.hosted.neo4j.org:7391/db/data/")
+graph_db = neo4j.GraphDatabaseService("http://hosted.neo4j.org/db/data/")
 
 #graph_db=None
 
 
 
-#HOST_NAME = 'localhost' # !!!REMEMBER TO CHANGE THIS!!!
-#PORT_NUMBER = 9292 # Maybe set this to 9000.
+HOST_NAME = '40cff9255' # !!!REMEMBER TO CHANGE THIS!!!
+PORT_NUMBER = 7391 # Maybe set this to 9000.
 nodes_r = re.compile(r'/children/([0-9]+)')
 rel_r = re.compile(r'/relations/([0-9]+)')
 stree_r = re.compile(r'/stree/([0-9]+)')
