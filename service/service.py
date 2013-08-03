@@ -40,7 +40,7 @@ graph_db=None
 
 
 HOST_NAME = 'phylet.herokuapp.com' # !!!REMEMBER TO CHANGE THIS!!!
-PORT_NUMBER = 8282 # Maybe set this to 9000.
+PORT_NUMBER = 7391 # Maybe set this to 9000.
 nodes_r = re.compile(r'/children/([0-9]+)')
 rel_r = re.compile(r'/relations/([0-9]+)')
 stree_r = re.compile(r'/stree/([0-9]+)')
