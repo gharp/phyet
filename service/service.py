@@ -17,7 +17,15 @@ import time
 # Import Neo4j modules
 from py2neo import neo4j, cypher
 
+#uri = "http://40cff9255.hosted.neo4j.org:7391/db/data/"
 
+#try:
+#    graph_db = neo4j.GraphDatabaseService(uri)
+#    print graph_db.neo4j_version
+#except rest.NoResponse:
+#    print "Cannot connect to host"
+#except rest.ResourceNotFound:
+#    print "Database service not found"
 
 # set up authentication parameters
 neo4j.authenticate("40cff9255.hosted.neo4j.org:7391", "06e990d53", "2ef5193c0")
@@ -25,7 +33,7 @@ neo4j.authenticate("40cff9255.hosted.neo4j.org:7391", "06e990d53", "2ef5193c0")
 
 # Attach to the graph db instance
 #set below in main to:
-graph_db = neo4j.GraphDatabaseService("http://40cff9255.hosted.neo4j.org:7391")
+graph_db = neo4j.GraphDatabaseService("http://40cff9255.hosted.neo4j.org:7391/db/data/")
 
 #graph_db=None
 
