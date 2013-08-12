@@ -28,7 +28,7 @@ from py2neo import neo4j, cypher
 #    print "Database service not found"
 
 # set up authentication parameters
-neo4j.authenticate("number.hosted.neo4j.org:port#", "login#", "pass#")
+neo4j.authenticate("40cff9255.hosted.neo4j.org:7391", "06e990d53", "2ef5193c0")
 
 
 # Attach to the graph db instance
